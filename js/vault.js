@@ -13,6 +13,7 @@ let viewUrl = null;
 let busy = false;
 let onLockCb = () => {};
 export let suppressAutoLock = false;
+const android = window.AndroidBridge || null; // present when running inside the Android app
 
 const kindOf = (type) => (type.startsWith('image/') ? 'image' : type.startsWith('video/') ? 'video' : 'other');
 const visible = () => (filter === 'all' ? items : items.filter((it) => kindOf(it.type) === filter));
@@ -207,7 +208,15 @@ async function importFiles(files) {
       ok++;
       render();
     }
-    toast(`${ok} file${ok === 1 ? '' : 's'} hidden. Now delete the originals from your gallery.`, 4500);
+    if (android && ok && android.pickedCount() > 0) {
+      if (confirm(`${ok} file${ok === 1 ? '' : 's'} hidden in the vault.\n\nDelete the original${ok === 1 ? '' : 's'} from your phone (Gallery/Files) so only the vault has them?`)) {
+        android.deleteOriginals();
+      } else {
+        toast('Originals kept. You can delete them yourself in your Gallery.', 4000);
+      }
+    } else {
+      toast(`${ok} file${ok === 1 ? '' : 's'} hidden. Now delete the originals from your gallery.`, 4500);
+    }
   } catch (e) {
     console.error(e);
     toast(e && e.name === 'QuotaExceededError'
@@ -291,6 +300,7 @@ async function exportCurrent() {
   const it = visible()[viewIndex];
   if (!it) return;
   const blob = await loadFileBlob(it);
+  if (android) return exportAndroid(blob, it);
   const file = new File([blob], it.name, { type: it.type });
   suppressAutoLock = true;
   try {
@@ -311,6 +321,27 @@ async function exportCurrent() {
   } finally {
     setTimeout(() => { suppressAutoLock = false; }, 1500);
   }
+}
+
+function toBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+
+async function exportAndroid(blob, it) {
+  android.beginExport(it.name);
+  const PIECE = 768 * 1024;
+  for (let off = 0; off < blob.size; off += PIECE) {
+    if (!android.appendExport(await toBase64(blob.slice(off, off + PIECE)))) {
+      toast('Export failed.');
+      return;
+    }
+  }
+  android.finishExport(it.type);
 }
 
 async function deleteCurrent() {
@@ -408,8 +439,19 @@ export function init({ onLock }) {
     if (e.key === 'ArrowRight') openViewer(viewIndex + 1);
   });
 
+  // Hooks used by the Android app (back button, auto-lock, messages).
+  window.__lockVault = lock;
+  window.__toast = toast;
+  window.__onBack = () => {
+    if (!$('viewer').hidden) { closeViewer(); return true; }
+    if (!$('settings').hidden) { $('settings').hidden = true; return true; }
+    if (isOpen()) { lock(); return true; }
+    return false;
+  };
+
   // Auto-lock whenever the app goes to the background (unless we're in the file picker).
-  document.addEventListener('visibilitychange', () => {
+  // Inside the Android app the native side decides when to lock.
+  if (!android) document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'hidden' && !suppressAutoLock && !busy) lock();
   });
 }

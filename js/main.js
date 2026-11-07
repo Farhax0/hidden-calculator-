@@ -188,7 +188,7 @@ async function boot() {
   }
   refresh();
 
-  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  if ('serviceWorker' in navigator && location.protocol !== 'file:' && !window.AndroidBridge) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 }
