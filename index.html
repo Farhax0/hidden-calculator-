@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Calculator">
+  <title>Calculator</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ============ CALCULATOR (the disguise) ============ -->
+  <main id="calc" class="calc">
+    <div id="setup" class="setup" hidden>
+      <div class="setup-title">Create your secret code</div>
+      <div id="setup-text" class="setup-text"></div>
+      <button id="setup-skip" class="setup-link" type="button" hidden>Start over</button>
+    </div>
+
+    <div class="display">
+      <div id="history" class="history"></div>
+      <div id="screen" class="screen">0</div>
+    </div>
+
+    <div class="keys" id="keys">
+      <button data-k="C" class="fn">AC</button>
+      <button data-k="back" class="fn" aria-label="Backspace">⌫</button>
+      <button data-k="%" class="fn">%</button>
+      <button data-k="/" class="op">÷</button>
+
+      <button data-k="7">7</button>
+      <button data-k="8">8</button>
+      <button data-k="9">9</button>
+      <button data-k="*" class="op">×</button>
+
+      <button data-k="4">4</button>
+      <button data-k="5">5</button>
+      <button data-k="6">6</button>
+      <button data-k="-" class="op">−</button>
+
+      <button data-k="1">1</button>
+      <button data-k="2">2</button>
+      <button data-k="3">3</button>
+      <button data-k="+" class="op">+</button>
+
+      <button data-k="00">00</button>
+      <button data-k="0">0</button>
+      <button data-k=".">.</button>
+      <button data-k="=" class="op eq">=</button>
+    </div>
+  </main>
+
+  <!-- ============ VAULT (hidden until the secret code is entered) ============ -->
+  <section id="vault" class="vault" hidden>
+    <header class="vault-bar">
+      <h1>Vault</h1>
+      <div class="bar-actions">
+        <button id="btn-settings" class="icon-btn" aria-label="Settings" title="Settings">⚙</button>
+        <button id="btn-lock" class="icon-btn" aria-label="Lock" title="Lock">🔒</button>
+      </div>
+    </header>
+
+    <nav class="tabs" id="tabs">
+      <button data-f="all" class="active">All</button>
+      <button data-f="image">Photos</button>
+      <button data-f="video">Videos</button>
+      <button data-f="other">Files</button>
+    </nav>
+
+    <div id="progress" class="progress" hidden>
+      <div class="progress-text" id="progress-text">Encrypting…</div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" hidden>
+      <div class="empty-icon">🗂</div>
+      <p>Your vault is empty.</p>
+      <p class="muted">Tap <b>+</b> to hide photos, videos and other files.<br>
+        After adding, delete the originals from your gallery/files app.</p>
+    </div>
+
+    <button id="btn-add" class="fab" aria-label="Add files">+</button>
+    <input id="file-input" type="file" multiple hidden>
+  </section>
+
+  <!-- ============ VIEWER ============ -->
+  <div id="viewer" class="viewer" hidden>
+    <div class="viewer-bar">
+      <button id="v-close" class="icon-btn" aria-label="Close">✕</button>
+      <div id="v-name" class="v-name"></div>
+      <button id="v-export" class="icon-btn" aria-label="Export" title="Save a copy to device">⬇</button>
+      <button id="v-delete" class="icon-btn danger" aria-label="Delete" title="Delete from vault">🗑</button>
+    </div>
+    <div id="v-body" class="viewer-body"></div>
+    <button id="v-prev" class="nav-btn prev" aria-label="Previous">‹</button>
+    <button id="v-next" class="nav-btn next" aria-label="Next">›</button>
+  </div>
+
+  <!-- ============ SETTINGS ============ -->
+  <div id="settings" class="sheet" hidden>
+    <div class="sheet-card">
+      <h2>Settings</h2>
+      <div class="row"><span>Files in vault</span><b id="s-count">0</b></div>
+      <div class="row"><span>Storage used</span><b id="s-size">0 B</b></div>
+
+      <h3>Change secret code</h3>
+      <p class="muted">Use a calculation, e.g. <code>123+123</code> or <code>45×9-7</code>.</p>
+      <input id="s-new" class="field" inputmode="decimal" placeholder="New code, e.g. 777+111" autocomplete="off">
+      <input id="s-new2" class="field" inputmode="decimal" placeholder="Repeat new code" autocomplete="off">
+      <button id="s-save" class="btn">Change code</button>
+      <div id="s-msg" class="msg"></div>
+
+      <p class="muted small">The vault locks itself whenever you leave the app.
+        Files are encrypted on this device with AES‑256; if you forget your code they cannot be recovered.</p>
+      <button id="s-close" class="btn ghost">Close</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
