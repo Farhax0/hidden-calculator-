@@ -1,5 +1,10 @@
 # Hidden Calculator Vault
 
+## 📥 [Download the Android app (HiddenCalculator.apk)](https://github.com/Farhax0/hidden-calculator-/raw/main/HiddenCalculator.apk)
+
+Tap the link on your Android phone, open the downloaded file, then tap **Install**
+(allow "Install unknown apps" if Android asks). It appears as **Calculator** in your app drawer.
+
 An app that looks and works like a normal **Calculator**. Typing your **secret calculation**
 (for example `123+123`) and pressing **=** opens a hidden, encrypted vault for your private
 photos, videos and other files.
@@ -39,8 +44,9 @@ In the vault you can:
 
 ## Install the Android app (APK)
 
-1. On your Android phone, open this repository on GitHub and go to
-   [`apk/HiddenCalculator.apk`](apk/HiddenCalculator.apk). Tap **Download** (the ⬇ "Download raw file" button).
+1. On your Android phone, tap
+   **[Download HiddenCalculator.apk](https://github.com/Farhax0/hidden-calculator-/raw/main/HiddenCalculator.apk)**
+   (it's also the `HiddenCalculator.apk` file at the top of this repository).
 2. Open the downloaded file. If Android asks, allow **Install unknown apps** for your browser or Files app.
 3. Tap **Install**. The app appears in your app drawer as **Calculator**, with a calculator icon.
 
@@ -103,4 +109,4 @@ To try it on a computer, run `python3 -m http.server 8000` in this folder and op
 | `js/vault.js` | Vault grid, import, viewer, export, delete, settings, auto-lock |
 | `sw.js`, `manifest.webmanifest`, `icons/` | Installable offline web app |
 | `android/` | Android app project (Gradle). `MainActivity.java` hosts the web app |
-| `apk/HiddenCalculator.apk` | Ready-to-install Android APK |
+| `HiddenCalculator.apk` | Ready-to-install Android APK |
